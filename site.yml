@@ -5,7 +5,7 @@
   become: yes
   tasks:
   - name: import variables 
-    import_vars: vars/main.yml  
+    include_vars: vars/main.yml  
   roles:
   - Stouts.mongodb 
 
