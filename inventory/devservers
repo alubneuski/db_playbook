@@ -1,0 +1,14 @@
+[localhost]
+localhost
+[web_servers]
+[app_servers]
+ec2-54-191-142-86.us-west-2.compute.amazonaws.com
+[db_servers]
+ec2-54-201-245-252.us-west-2.compute.amazonaws.com
+[devservers:children]
+app_servers
+db_servers
+[devservers:vars]
+env=dev
+[app_servers:vars]
+dbUrl=mongodb://ec2-54-213-203-41.us-west-2.compute.amazonaws.com/notinphilly

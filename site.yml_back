@@ -1,0 +1,97 @@
+---
+- hosts: localhost
+  name: Createing app server
+  connection: local
+  gather_facts: no
+  roles:
+    - {role: create-server, region: "us-east-1", groupName: default_notinphilly, instanceTags: app_server, countTag: notinphilly, name: "appservers"}
+
+- hosts: localhost name: Creating ec2 servers for db server connection: local gather_facts: no
+  roles:
+    - { role: create-server, region: "us-east-1", groupName: default_db_notinphilly, instanceTags: mongo_server, countTag: notinphilly, name: "dbservers" }
+
+- hosts: tag_class_dbservers
+  name: Install mongo onto db server
+  remote_user: ubuntu
+  become: yes
+  tasks:
+  - name: test
+    debug: var={{ item.ec2_tag_ServerType }}
+    with_items: hostvars
+  roles:
+  - Stouts.mongodb 
+
+- hosts: tag_class_dbservers
+  name: Restore Test Database
+  remote_user: ubuntu
+  tasks:
+  - name: Create folder
+    file: path=~/notinphilly  state=directory
+    tags: "CreateFolder"
+  - name: Copy the database
+    copy: src=files/notinphilly dest=~/ owner=ubuntu mode=0655
+    tags: "Copydb"
+  - name: Import into the DB
+    command: mongorestore ./notinphilly
+    tags: "db_restore"
+  - name: Remove backup
+    file: path=~/notinphilly state=absent
+
+- hosts: tag_class_app_servers 
+  remote_user: ubuntu
+  name: Install Nodejs 
+  tasks:
+  - name: Configure Environmental Varialbe
+    lineinfile: dest=/etc/environment line="AWS_MONGO_DB_URL=mongodb://{{ groups['db_servers'][0] }}/notinphilly"
+    become: yes
+  roles:
+  - nodejs
+
+- hosts: tag_class_app_servers 
+  remote_user: ubuntu
+  name: Install App 
+  roles: 
+  - notinphilly
+
+- hosts: localhost
+  name: Create Load Balancers
+  connection: local
+  gather_facts: false 
+  tasks:
+   - include_vars: vars/main.yml
+     tags: "include_vars"
+   - name: Create ELB  
+     ec2_elb_lb:
+       name: "NotinphillyLB"
+       aws_access_key: "{{ lookup('env','AWS_ACCESS_KEY_ID')  }}" 
+       aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}" 
+       ec2_url: "https://{{ iam_account_number }}.signin.aws.amazon.com" 
+       state: present
+       region: "{{ region }}"
+       zones: "{{ zones }}"
+       listeners:
+         - protocol: http
+           load_balancer_port: 80
+           instance_port: 80
+       stickiness:
+          type: loadbalancer 
+          enabled: yes
+          expiration: 300
+     register: elb_id
+
+   - name: Print out the vars
+     debug: var=groups['app_servers']
+   - name: Print out the vars
+     debug: var=ec2_id
+   - name: Instance register
+     ec2_elb:
+       aws_access_key: "{{ lookup('env','AWS_ACCESS_KEY_ID')  }}"
+       aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+       ec2_url: "https://{{ iam_account_number }}.signin.aws.amazon.com"
+       instance_id: "{{ hostvars[groups['app_servers'][0]]['ec2_id'] }}"
+       region: "{{ region }}"
+       zones: "{{ zones }}"
+       ec2_elbs: elb_id
+       state: present
+       wait: yes
+     tags: create_elb

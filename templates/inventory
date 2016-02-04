@@ -1,0 +1,10 @@
+[localhost]
+localhost
+[appservers]
+{{ appServer.instances[0].public_dns_name }}
+[devservers:children]
+appservers
+[devservers:vars]
+env=dev
+[appservers:vars]
+dbUrl="mongodb://{{ appServer.instances[0].public_dns_name }}/notinphilly

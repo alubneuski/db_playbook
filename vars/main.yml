@@ -1,0 +1,17 @@
+---
+# vars file for notinphilly
+region: us-west-2
+zones: 
+  - us-west-2b
+  - us-west-2a
+zone: us-west-2b
+app_ami_id: ami-9abea4fb
+db_ami_id: ami-9abea4fb
+env: dev
+app_name: notinphilly
+install_dir: /srv
+iam_account_number: "{{ lookup('env','AWS_ACCOUNT_NUMBER') }}"
+instanceType: t2.micro
+key_name: alexL
+group_name: default_notinphilly
+initial_count: 1

@@ -1,0 +1,26 @@
+---  
+- hosts: tag_class_dbservers
+  name: Install mongo onto db server
+  connection: local
+  become: yes
+  tasks:
+  - name: import variables 
+    import_vars: vars/main.yml  
+  roles:
+  - Stouts.mongodb 
+
+- hosts: localhost 
+  name: Restore Test Database
+  connection: local
+  tasks:
+  - name: Create folder
+    file: path=~/notinphilly  state=directory
+    tags: "CreateFolder"
+  - name: Copy the database
+    copy: src=files/notinphilly dest=~/ owner=ubuntu mode=0655
+    tags: "Copydb"
+  - name: Import into the DB
+    command: mongorestore ./notinphilly
+    tags: "db_restore"
+  - name: Remove backup
+    file: path=~/notinphilly state=absent
