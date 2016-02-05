@@ -1,0 +1,23 @@
+---
+
+- name: RedHat | Repository update
+  yum: name=* state=latest
+
+- name: RedHat | Install Packages
+  yum: name=mongodb state=installed
+
+- name: RedHat | Install Packages
+  yum: name=mongodb-server state=installed
+
+- name: MongoDB smallFiles
+  copy: src=mongodb.conf dest=/etc/
+
+- name: MongoDB smallFiles
+  copy: src=mongod.conf dest=/etc/
+
+- name: MongoDB restart
+  service: name=mongod state=restarted
+
+- name: FirewallD mongodb rule add
+  firewalld: port={{ pumukit2_mongodb_port }}/tcp permanent=true state=enabled immediate=yes
+  when: firewalld is defined

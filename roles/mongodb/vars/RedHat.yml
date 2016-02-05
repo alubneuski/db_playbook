@@ -1,0 +1,7 @@
+---
+
+mongodb_packages_dependencies:
+  - libselinux-python
+
+mongodb_packages:
+  - mongodb 
