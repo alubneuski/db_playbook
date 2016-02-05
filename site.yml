@@ -7,20 +7,14 @@
   - name: import variables 
     include_vars: vars/main.yml  
   roles:
-  - mongodb 
+  - mrcrilly.mongodb
 
 - hosts: localhost 
   name: Restore Test Database
   connection: local
   tasks:
-  - name: Create folder
-    file: path=~/notinphilly  state=directory
-    tags: "CreateFolder"
-  - name: Copy the database
-    copy: src=files/notinphilly dest=~/ mode=0655
-    tags: "Copydb"
   - name: Import into the DB
-    command: mongorestore ./notinphilly
+    command: mongorestore files/notinphilly
     tags: "db_restore"
   - name: Remove backup
     file: path=~/notinphilly state=absent

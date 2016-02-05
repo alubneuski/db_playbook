@@ -1,21 +1,21 @@
 ---
-dependencies: []
-
 galaxy_info:
-  author: lesmyrmidons
-  description: MongoDB for RedHat/CentOS/Debian 64Bit.
-  company: ""
-  license: "license (BSD, MIT)"
-  min_ansible_version: 1.4
+  author: Michael Crilly
+  description: MongoDB 2.4 role
+  company: AutoLogic Technology Ltd
+  license: BSD
+  min_ansible_version: 1.7
   platforms:
   - name: EL
     versions:
-    - all
-  - name: Debian
-    versions:
-    - all
-  - name: RedHat
-    versions:
-    - all
+      - 6
+  #- name: Ubuntu
+  #  versions:
+  #  - trusty
+  #- name: Debian
+  #  versions:
+  #  - wheezy
   categories:
+    - database
     - database:nosql
+dependencies: []

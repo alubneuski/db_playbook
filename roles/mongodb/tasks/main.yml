@@ -1,12 +1,25 @@
 ---
-# This role deploys the mongodb processes and sets up settings.
 
-- name: Include OS-specific variables.
-  include_vars: "{{ ansible_os_family }}.yml"
+- include: software.yml
+  tags:
+    - mrcrilly_mongodb
+    - mrcrilly_mongodb_software
+  when: mrcrilly_mongodb_manage_software
 
-- include: setup-RedHat.yml
-  when: ansible_os_family == 'RedHat'
+- include: configuration.yml
+  tags:
+    - mrcrilly_mongodb
+    - mrcrilly_mongodb_configuration
+  when: mrcrilly_mongodb_manage_configuration
 
-- include: setup-Debian.yml
-  when: ansible_os_family == 'Debian'
+- include: permissions.yml
+  tags:
+    - mrcrilly_mongodb
+    - mrcrilly_mongodb_permissions
+  when: mrcrilly_mongodb_manage_permissions
 
+- include: service.yml
+  tags:
+    - mrcrilly_mongodb
+    - mrcrilly_mongodb_service
+  when: mrcrilly_mongodb_manage_service

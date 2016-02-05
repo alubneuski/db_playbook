@@ -1,32 +1,42 @@
-ansible-role-mongodb
-====================
+Role Name
+=========
 
-[![Build Status](https://travis-ci.org/lesmyrmidons/ansible-role-mongodb.svg?branch=master)](https://travis-ci.org/lesmyrmidons/ansible-role-mongodb)
+MongoDB Server management role. Installs and manages the configuration for MongoDB 2.4.
 
-Ansible Role - Mongodb on RHEL/CentOS and Debian/Ubuntu.
+**Does NOT support MongoDB 2.6 - yet**
 
-## Requirements
+Requirements
+------------
 
 None.
 
-## Role Variables
+Role Variables
+--------------
 
-For Debian / Ubuntu :
+All MongoDB Server configuration (2.4) has been placed into a dict, mrcrilly_mongodb_configuration.key, where 'key' is the name of the configuration item in mongodb.conf.
 
-	url_apt_key: "http://keyserver.ubuntu.com/pks/lookup?op=get&search="
-	mongodb_repository: "deb http://downloads-distro.mongodb.org/repo/debian-sysvinit dist 10gen"
+Dependencies
+------------
 
-To change the list of packages to install:
+None.
 
-	mongodb_packages:
-	  - mongodb-org
+Example Playbook
+----------------
 
-## Example Playbook
+Easy to use:
 
-    - hosts: nosql
+    - hosts: servers
       roles:
-        - { role: lesmyrmidons.mongodb }
+         - mrcrilly.mongodb
 
-## License
+License
+-------
 
-MIT / BSD
+BSD
+
+Author Information
+------------------
+
+- Michael Crilly
+- http://mrcrilly.me/
+- @mrcrilly
